@@ -63,5 +63,16 @@ namespace ProjetoPlanta_Backend.Data
 
             return lista;
         }
+        public async Task updateDocAsync(string collection, string id, object data)
+        {
+            var docRef = _firestoreDb.Collection(collection).Document(id);
+            await docRef.SetAsync(data, SetOptions.MergeAll);
+        }
+
+        public async Task deleteDocAsync(string collection, string id)
+        {
+            var docRef = _firestoreDb.Collection(collection).Document(id);
+            await docRef.DeleteAsync();
+        }
     }
 }

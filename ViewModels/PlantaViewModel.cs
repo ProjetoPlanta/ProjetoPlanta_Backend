@@ -36,7 +36,7 @@
         public string nomeCientifico { get; set; } = string.Empty;
         public string nomePopular { get; set; } = string.Empty;
         public string porte { get; set; } = string.Empty;
-        public decimal preco { get; set; }
+        public double preco { get; set; }
         public bool toxicidade { get; set; }
         public string umidadeSolo { get; set; } = string.Empty;
     }

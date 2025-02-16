@@ -115,5 +115,69 @@ namespace ProjetoPlanta_Backend.Controllers
             }
         }
 
+        [HttpPut("plantas/{id}")]
+        public async Task<IActionResult> AtualizaDocAsync([FromRoute] string id, [FromBody] PlantaAtualizaViewModel model)
+        {
+            try
+            {
+                var plantaExistente = await _service.getDocAsync<Planta>("Plantas", id);
+
+                if (plantaExistente == null)
+                {
+                    return NotFound(new { error = "Planta não encontrada!" });
+                }
+
+                // Atualiza os campos da planta existente com os novos valores
+                plantaExistente.nomeCientifico = model.nomeCientifico;
+                plantaExistente.categoriaGeral = model.categoriaGeral;
+                plantaExistente.cicloVida = model.cicloVida;
+                plantaExistente.descricao = model.descricao;
+                plantaExistente.epocaFloracao = model.epocaFloracao;
+                plantaExistente.necessidadeAgua = model.necessidadeAgua;
+                plantaExistente.necessidadeLuz = model.necessidadeLuz;
+                plantaExistente.necessidadePoda = model.necessidadePoda;
+                plantaExistente.porte = model.porte;
+                plantaExistente.preco = model.preco;
+                plantaExistente.umidadeSolo = model.umidadeSolo;
+                plantaExistente.ambiente = model.ambiente;
+                plantaExistente.atraiAbelha = model.atraiAbelha;
+                plantaExistente.medicinal = model.medicinal;
+                plantaExistente.toxicidade = model.toxicidade;
+                plantaExistente.imagem = model.imagem;
+
+                // Atualiza o documento no Firestore
+                await _service.updateDocAsync("Plantas", id, plantaExistente);
+
+                return Ok(new { message = "Planta atualizada com sucesso!", planta = plantaExistente });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
+            }
+        }
+
+
+        [HttpDelete("plantas/{id}")]
+        public async Task<IActionResult> DeletaPlantaAsync([FromRoute] string id)
+        {
+            try
+            {
+                var planta = await _service.getDocAsync<Planta>("Plantas", id);
+
+                if (planta == null)
+                {
+                    return NotFound(new { error = "Planta não encontrada!" });
+                }
+
+                await _service.deleteDocAsync("Plantas", id);
+                return Ok(new { message = "Planta deletada com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
+            }
+        }
+
+
     }
 }
