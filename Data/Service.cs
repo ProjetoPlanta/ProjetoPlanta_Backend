@@ -33,15 +33,35 @@ namespace ProjetoPlanta_Backend.Data
             var docref = _firestoreDb.Collection(coll).Document(id);
             await docref.SetAsync(data);
         }
-        public async Task getDocAsync(string coll, string id)
+        public async Task<T?> getDocAsync<T>(string collection, string id)
         {
-            var docref = _firestoreDb.Collection(coll).Document(id);
-            var snap = await docref.GetSnapshotAsync();
-            if (snap.Exists)
-            {
-                var doc = snap.ToDictionary();
+            var docRef = _firestoreDb.Collection(collection).Document(id);
+            var snapshot = await docRef.GetSnapshotAsync();
 
+            if (snapshot.Exists)
+            {
+                return snapshot.ConvertTo<T>();
             }
+
+            return default;
+        }
+        public async Task<List<T>> getAllDocsAsync<T>(string collection)
+        {
+            var query = _firestoreDb.Collection(collection);
+            var snapshot = await query.GetSnapshotAsync();
+
+            List<T> lista = new List<T>();
+
+            foreach (var doc in snapshot.Documents)
+            {
+                if (doc.Exists)
+                {
+                    var obj = doc.ConvertTo<T>();
+                    lista.Add(obj);
+                }
+            }
+
+            return lista;
         }
     }
 }

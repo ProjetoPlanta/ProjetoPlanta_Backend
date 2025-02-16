@@ -71,16 +71,49 @@ namespace ProjetoPlanta_Backend.Controllers
                     return StatusCode(500, new { error = "Erro ao salvar no Firestore", detalhes = ex.Message });
                 }
 
-                //Console.WriteLine(" Criando planta no Firestore...");
-                //await _service.AddDocAsync("Plantas", id, novaPlanta);
-                //Console.WriteLine(" Planta criada com sucesso!");
-                //return Ok(new { message = "Planta cadastrada com sucesso!", id = id });
-
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("plantas")]
+        public async Task<IActionResult> ExibePlantasAsync()
+        {
+            try
+            {
+                var plantas = await _service.getAllDocsAsync<Planta>("Plantas");
+
+                if (plantas == null || plantas.Count == 0)
+                    return NotFound(new { error = "Nenhuma planta encontrada." });
+
+                return Ok(plantas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("plantas/{id}")]
+        public async Task<IActionResult> ExibePlantaPorIdAsync([FromRoute] string id)
+        {
+            try
+            {
+                var planta = await _service.getDocAsync<Planta>("Plantas", id);
+
+                if (planta == null)
+                    return NotFound(new { error = "Planta não encontrada!" });
+
+                return Ok(planta);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
+            }
+        }
+
     }
 }
