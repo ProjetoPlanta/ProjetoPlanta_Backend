@@ -1,10 +1,15 @@
-﻿using System.Runtime.CompilerServices;
-using Google.Cloud.Firestore;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using ProjetoPlanta_Backend.Models;
 using ProjetoPlanta_Backend.ViewModels;
-using Microsoft.AspNetCore.Authorization;
+using ZXing;
 using ProjetoPlanta_Backend.Data;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using ZXing.Rendering;
+using System.Drawing;
+using SixLabors.ImageSharp.PixelFormats;
+
 
 namespace ProjetoPlanta_Backend.Controllers
 {
@@ -127,7 +132,6 @@ namespace ProjetoPlanta_Backend.Controllers
                     return NotFound(new { error = "Planta não encontrada!" });
                 }
 
-                // Atualiza os campos da planta existente com os novos valores
                 plantaExistente.nomeCientifico = model.nomeCientifico;
                 plantaExistente.categoriaGeral = model.categoriaGeral;
                 plantaExistente.cicloVida = model.cicloVida;
@@ -145,7 +149,6 @@ namespace ProjetoPlanta_Backend.Controllers
                 plantaExistente.toxicidade = model.toxicidade;
                 plantaExistente.imagem = model.imagem;
 
-                // Atualiza o documento no Firestore
                 await _service.updateDocAsync("Plantas", id, plantaExistente);
 
                 return Ok(new { message = "Planta atualizada com sucesso!", planta = plantaExistente });
@@ -178,6 +181,6 @@ namespace ProjetoPlanta_Backend.Controllers
             }
         }
 
-
+        
     }
 }
