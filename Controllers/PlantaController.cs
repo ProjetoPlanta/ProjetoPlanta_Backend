@@ -2,13 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoPlanta_Backend.Models;
 using ProjetoPlanta_Backend.ViewModels;
-using ZXing;
 using ProjetoPlanta_Backend.Data;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using ZXing.Rendering;
-using System.Drawing;
-using SixLabors.ImageSharp.PixelFormats;
 
 
 namespace ProjetoPlanta_Backend.Controllers
@@ -22,8 +16,9 @@ namespace ProjetoPlanta_Backend.Controllers
         {
             _service = new FirestoreService();
         }
-
+       
         [HttpPost]
+
         [Route("plantas")]
         public async Task<IActionResult> CadastroPlantaAsync([FromBody]  PlantaCadastroViewModel model)
         {
