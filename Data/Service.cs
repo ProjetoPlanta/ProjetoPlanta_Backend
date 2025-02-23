@@ -2,12 +2,26 @@
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using System.Threading.Tasks;
+using ProjetoPlanta_Backend.Models;
 
 namespace ProjetoPlanta_Backend.Data
 {
     public class FirestoreService
     {
         private FirestoreDb _firestoreDb;
+
+        public async Task<T?> getDocByNomeAsync<T>(string collection, string nomePopular)
+        {
+            var query = _firestoreDb.Collection(collection)
+                                    .WhereEqualTo("nomePopular", nomePopular);
+            var snapshot = await query.GetSnapshotAsync();
+            if (snapshot.Documents.Count > 0)
+            {
+                // Retorna o primeiro documento encontrado
+                return snapshot.Documents[0].ConvertTo<T>();
+            }
+            return default;
+        }
 
         public static string CriarID(string nome)
         {
@@ -28,10 +42,11 @@ namespace ProjetoPlanta_Backend.Data
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
             _firestoreDb = FirestoreDb.Create("projetoplanta2025-84d0e");
         }
-        public async Task AddDocAsync(string coll, string id, object data)
+        public async Task<string> AddDocAsync(string collection, object data)
         {
-            var docref = _firestoreDb.Collection(coll).Document(id);
-            await docref.SetAsync(data);
+            var collectionRef = _firestoreDb.Collection(collection);
+            var docRef = await collectionRef.AddAsync(data);
+            return docRef.Id;
         }
         public async Task<T?> getDocAsync<T>(string collection, string id)
         {
@@ -45,7 +60,7 @@ namespace ProjetoPlanta_Backend.Data
 
             return default;
         }
-        public async Task<List<T>> getAllDocsAsync<T>(string collection)
+        public async Task<List<T>> getAllDocsAsync<T>(string collection) where T : new()
         {
             var query = _firestoreDb.Collection(collection);
             var snapshot = await query.GetSnapshotAsync();
@@ -56,7 +71,13 @@ namespace ProjetoPlanta_Backend.Data
             {
                 if (doc.Exists)
                 {
-                    var obj = doc.ConvertTo<T>();
+                    T obj = doc.ConvertTo<T>();
+
+                    if (obj is Planta planta)
+                    {
+                        planta.id = doc.Id;
+                    }
+
                     lista.Add(obj);
                 }
             }
@@ -75,4 +96,6 @@ namespace ProjetoPlanta_Backend.Data
             await docRef.DeleteAsync();
         }
     }
+
+
 }

@@ -16,11 +16,10 @@ namespace ProjetoPlanta_Backend.Controllers
         {
             _service = new FirestoreService();
         }
-       
-        [HttpPost]
 
+        [HttpPost]
         [Route("plantas")]
-        public async Task<IActionResult> CadastroPlantaAsync([FromBody]  PlantaCadastroViewModel model)
+        public async Task<IActionResult> CadastroPlantaAsync([FromBody] PlantaCadastroViewModel model)
         {
             try
             {
@@ -28,15 +27,6 @@ namespace ProjetoPlanta_Backend.Controllers
                 {
                     return BadRequest(new { error = "Nome da planta inválido!" });
                 }
-
-                // Criar um ID seguro baseado no nome da planta
-                string id = FirestoreService.CriarID(model.nomePopular);
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    return BadRequest(new { error = "ID inválido gerado!" });
-                }
-                Console.WriteLine($" ID gerado: {id}");
-
 
                 var novaPlanta = new Planta
                 {
@@ -59,22 +49,14 @@ namespace ProjetoPlanta_Backend.Controllers
                     imagem = model.imagem
                 };
 
-                try
-                {
-                    await _service.AddDocAsync("Plantas", id, novaPlanta);
-                    Console.WriteLine(" Documento salvo no Firestore!");
-                    return Ok(new { message = "Planta cadastrada com sucesso!", id = id });
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($" Erro ao salvar no Firestore: {ex.Message}");
-                    return StatusCode(500, new { error = "Erro ao salvar no Firestore", detalhes = ex.Message });
-                }
-
+                string autoId = await _service.AddDocAsync("Plantas", novaPlanta);
+                Console.WriteLine("Documento salvo no Firestore com ID: " + autoId);
+                return Ok(new { message = "Planta cadastrada com sucesso!", id = autoId });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
+                Console.WriteLine($"Erro ao salvar no Firestore: {ex.Message}");
+                return StatusCode(500, new { error = "Erro ao salvar no Firestore", detalhes = ex.Message });
             }
         }
 

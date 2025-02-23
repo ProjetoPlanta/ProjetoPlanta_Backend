@@ -56,6 +56,7 @@ namespace ProjetoPlanta_Backend.Models
 
         [FirestoreProperty]
         public string imagem { get; set; }
+        public string id { get; set; }
     }
 
 }
