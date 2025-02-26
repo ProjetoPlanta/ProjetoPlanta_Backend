@@ -19,6 +19,7 @@
         public double preco { get; set; }
         public bool toxicidade { get; set; }
         public string umidadeSolo { get; set; } = string.Empty;
+        public string caminhoImagem { get; set; }
     }
     public class PlantaAtualizaViewModel
     {
