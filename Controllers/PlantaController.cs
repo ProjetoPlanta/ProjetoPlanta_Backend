@@ -72,11 +72,11 @@ namespace ProjetoPlanta_Backend.Controllers
                 }
 
                 // Converter a imagem para base64 se o caminho da imagem for fornecido
-                if (!string.IsNullOrWhiteSpace(model.caminhoImagem))
-                {
-                    byte[] imagemBytes = System.IO.File.ReadAllBytes(model.caminhoImagem);
-                    model.imagem = Convert.ToBase64String(imagemBytes);
-                }
+                //if (!string.IsNullOrWhiteSpace(model.caminhoImagem))
+                //{
+                    //byte[] imagemBytes = System.IO.File.ReadAllBytes(model.caminhoImagem);
+                  //  model.imagem = Convert.ToBase64String(imagemBytes);
+                //}
 
                 var novaPlanta = new Planta
                 {
@@ -169,6 +169,7 @@ namespace ProjetoPlanta_Backend.Controllers
                 plantaExistente.necessidadePoda = model.necessidadePoda;
                 plantaExistente.porte = model.porte;
                 plantaExistente.preco = model.preco;
+                plantaExistente.nomePopular = model.nomePopular,
                 plantaExistente.umidadeSolo = model.umidadeSolo;
                 plantaExistente.ambiente = model.ambiente;
                 plantaExistente.atraiAbelha = model.atraiAbelha;
