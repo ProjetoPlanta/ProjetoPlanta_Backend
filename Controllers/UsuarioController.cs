@@ -39,7 +39,6 @@ namespace ProjetoPlanta_Backend.Controllers
                     return Unauthorized(new { message = "Usuário ou senha inválidos" });
                 }
 
-                // Gera o token JWT
                 var token = GerarToken(admin);
 
                 return Ok(new { message = "Login realizado com sucesso", token });
@@ -64,7 +63,7 @@ namespace ProjetoPlanta_Backend.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(2), // Token expira em 2 horas
+                expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: credenciais
             );
 

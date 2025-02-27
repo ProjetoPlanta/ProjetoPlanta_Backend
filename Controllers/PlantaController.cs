@@ -17,49 +17,6 @@ namespace ProjetoPlanta_Backend.Controllers
             _service = new FirestoreService();
         }
 
-        //[HttpPost]
-        //[Route("plantas")]
-        //public async Task<IActionResult> CadastroPlantaAsync([FromBody] PlantaCadastroViewModel model)
-        //{
-        //    try
-        //    {
-        //        if (model == null || string.IsNullOrWhiteSpace(model.nomePopular))
-        //        {
-        //            return BadRequest(new { error = "Nome da planta inválido!" });
-        //        }
-
-        //        var novaPlanta = new Planta
-        //        {
-        //            nomePopular = model.nomePopular,
-        //            nomeCientifico = model.nomeCientifico,
-        //            categoriaGeral = model.categoriaGeral,
-        //            cicloVida = model.cicloVida,
-        //            descricao = model.descricao,
-        //            epocaFloracao = model.epocaFloracao,
-        //            necessidadeAgua = model.necessidadeAgua,
-        //            necessidadeLuz = model.necessidadeLuz,
-        //            necessidadePoda = model.necessidadePoda,
-        //            porte = model.porte,
-        //            preco = model.preco,
-        //            umidadeSolo = model.umidadeSolo,
-        //            ambiente = model.ambiente,
-        //            atraiAbelha = model.atraiAbelha,
-        //            medicinal = model.medicinal,
-        //            toxicidade = model.toxicidade,
-        //            imagem = model.imagem
-        //        };
-
-        //        string autoId = await _service.AddDocAsync("Plantas", novaPlanta);
-        //        Console.WriteLine("Documento salvo no Firestore com ID: " + autoId);
-        //        return Ok(new { message = "Planta cadastrada com sucesso!", id = autoId });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Erro ao salvar no Firestore: {ex.Message}");
-        //        return StatusCode(500, new { error = "Erro ao salvar no Firestore", detalhes = ex.Message });
-        //    }
-        //}
-
         [HttpPost]
         [Route("plantas")]
         public async Task<IActionResult> CadastroPlantaAsync([FromBody] PlantaCadastroViewModel model)
