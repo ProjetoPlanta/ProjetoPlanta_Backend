@@ -71,12 +71,6 @@ namespace ProjetoPlanta_Backend.Controllers
                     return BadRequest(new { error = "Nome da planta inválido!" });
                 }
 
-                // Converter a imagem para base64 se o caminho da imagem for fornecido
-                //if (!string.IsNullOrWhiteSpace(model.caminhoImagem))
-                //{
-                    //byte[] imagemBytes = System.IO.File.ReadAllBytes(model.caminhoImagem);
-                  //  model.imagem = Convert.ToBase64String(imagemBytes);
-                //}
 
                 var novaPlanta = new Planta
                 {
