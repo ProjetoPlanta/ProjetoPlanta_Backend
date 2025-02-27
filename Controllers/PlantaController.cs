@@ -163,7 +163,7 @@ namespace ProjetoPlanta_Backend.Controllers
                 plantaExistente.necessidadePoda = model.necessidadePoda;
                 plantaExistente.porte = model.porte;
                 plantaExistente.preco = model.preco;
-                plantaExistente.nomePopular = model.nomePopular,
+                plantaExistente.nomePopular = model.nomePopular;
                 plantaExistente.umidadeSolo = model.umidadeSolo;
                 plantaExistente.ambiente = model.ambiente;
                 plantaExistente.atraiAbelha = model.atraiAbelha;
