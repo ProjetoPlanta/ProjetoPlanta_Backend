@@ -58,7 +58,44 @@ namespace ProjetoPlanta_Backend.Controllers
                 return StatusCode(500, new { error = "Erro ao salvar no Firestore", detalhes = ex.Message });
             }
         }
+        [HttpPost("Plantas/Movimentar")]
+        public async Task<IActionResult> MovimentarEstoque([FromBody] Movimentacao movimentacao)
+        {
+            try
+            {
+                var planta = await _service.getDocAsync<Planta>("Plantas", movimentacao.plantaId);
+                if (planta == null)
+                {
+                    return NotFound(new { message = "Planta não encontrada." });
+                }
 
+                if (movimentacao.tipoTransacao == "venda presencial" || movimentacao.tipoTransacao == "venda online")
+                {
+                    if (planta.estoque < movimentacao.quantidade)
+                    {
+                        return BadRequest(new { message = "Estoque insuficiente." });
+                    }
+                    planta.estoque -= movimentacao.quantidade;
+                }
+                else if (movimentacao.tipoTransacao == "reabastecimento")
+                {
+                    planta.estoque += movimentacao.quantidade;
+                }
+                else
+                {
+                    return BadRequest(new { message = "Tipo de transação inválido." });
+                }
+
+                await _service.updateDocAsync("Plantas", movimentacao.plantaId, planta);
+                await _service.AddDocAsync("Movimentacoes", movimentacao);
+
+                return Ok(new { message = "Movimentação registrada com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor.", detalhes = ex.Message });
+            }
+        }
 
 
         [HttpGet]
