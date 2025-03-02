@@ -18,7 +18,7 @@ namespace ProjetoPlanta_Backend.Controllers
         }
 
         [HttpPost]
-        [Route("plantas")]
+        [Route("Plantas")]
         public async Task<IActionResult> CadastroPlantaAsync([FromBody] PlantaCadastroViewModel model)
         {
             try
@@ -28,26 +28,24 @@ namespace ProjetoPlanta_Backend.Controllers
                     return BadRequest(new { error = "Nome da planta inválido!" });
                 }
 
-
                 var novaPlanta = new Planta
                 {
                     nomePopular = model.nomePopular,
                     nomeCientifico = model.nomeCientifico,
-                    categoriaGeral = model.categoriaGeral,
-                    cicloVida = model.cicloVida,
                     descricao = model.descricao,
+                    comoCuidar = model.comoCuidar,
                     epocaFloracao = model.epocaFloracao,
                     necessidadeAgua = model.necessidadeAgua,
                     necessidadeLuz = model.necessidadeLuz,
-                    necessidadePoda = model.necessidadePoda,
+                    frequenciaPoda = model.frequenciaPoda,
                     porte = model.porte,
                     preco = model.preco,
                     umidadeSolo = model.umidadeSolo,
                     ambiente = model.ambiente,
                     atraiAbelha = model.atraiAbelha,
-                    medicinal = model.medicinal,
-                    toxicidade = model.toxicidade,
-                    imagem = model.imagem
+                    petFriendly = model.petFriendly,
+                    imagem = model.imagem,
+                    estoque = model.estoque
                 };
 
                 string autoId = await _service.AddDocAsync("Plantas", novaPlanta);
@@ -61,8 +59,10 @@ namespace ProjetoPlanta_Backend.Controllers
             }
         }
 
+
+
         [HttpGet]
-        [Route("plantas")]
+        [Route("Plantas")]
         public async Task<IActionResult> ExibePlantasAsync()
         {
             try
@@ -70,35 +70,47 @@ namespace ProjetoPlanta_Backend.Controllers
                 var plantas = await _service.getAllDocsAsync<Planta>("Plantas");
 
                 if (plantas == null || plantas.Count == 0)
+                {
                     return NotFound(new { error = "Nenhuma planta encontrada." });
+                }
 
                 return Ok(plantas);
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Erro ao buscar plantas no Firestore: {ex.Message}");
                 return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
-            }
+            } 
         }
+
         [HttpGet]
-        [Route("plantas/{id}")]
+        [Route("Plantas/{id}")]
         public async Task<IActionResult> ExibePlantaPorIdAsync([FromRoute] string id)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest(new { error = "ID inválido!" });
+                }
+
                 var planta = await _service.getDocAsync<Planta>("Plantas", id);
 
                 if (planta == null)
+                {
                     return NotFound(new { error = "Planta não encontrada!" });
+                }
 
                 return Ok(planta);
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Erro ao buscar planta por ID: {ex.Message}");
                 return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
             }
         }
 
-        [HttpPut("plantas/{id}")]
+        [HttpPut("Plantas/{id}")]
         public async Task<IActionResult> AtualizaDocAsync([FromRoute] string id, [FromBody] PlantaAtualizaViewModel model)
         {
             try
@@ -111,21 +123,19 @@ namespace ProjetoPlanta_Backend.Controllers
                 }
 
                 plantaExistente.nomeCientifico = model.nomeCientifico;
-                plantaExistente.categoriaGeral = model.categoriaGeral;
-                plantaExistente.cicloVida = model.cicloVida;
                 plantaExistente.descricao = model.descricao;
+                plantaExistente.comoCuidar = model.comoCuidar;
                 plantaExistente.epocaFloracao = model.epocaFloracao;
                 plantaExistente.necessidadeAgua = model.necessidadeAgua;
                 plantaExistente.necessidadeLuz = model.necessidadeLuz;
-                plantaExistente.necessidadePoda = model.necessidadePoda;
+                plantaExistente.frequenciaPoda = model.frequenciaPoda; // Corrigido para o nome correto
                 plantaExistente.porte = model.porte;
                 plantaExistente.preco = model.preco;
                 plantaExistente.nomePopular = model.nomePopular;
                 plantaExistente.umidadeSolo = model.umidadeSolo;
                 plantaExistente.ambiente = model.ambiente;
                 plantaExistente.atraiAbelha = model.atraiAbelha;
-                plantaExistente.medicinal = model.medicinal;
-                plantaExistente.toxicidade = model.toxicidade;
+                plantaExistente.petFriendly = model.petFriendly; // Corrigido para usar petFriendly
                 plantaExistente.imagem = model.imagem;
 
                 await _service.updateDocAsync("Plantas", id, plantaExistente);
@@ -134,16 +144,23 @@ namespace ProjetoPlanta_Backend.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Erro ao atualizar planta: {ex.Message}");
                 return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
             }
         }
 
 
-        [HttpDelete("plantas/{id}")]
+
+        [HttpDelete("Plantas/{id}")]
         public async Task<IActionResult> DeletaPlantaAsync([FromRoute] string id)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest(new { error = "ID inválido!" });
+                }
+
                 var planta = await _service.getDocAsync<Planta>("Plantas", id);
 
                 if (planta == null)
@@ -156,10 +173,12 @@ namespace ProjetoPlanta_Backend.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Erro ao deletar planta: {ex.Message}");
                 return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
             }
         }
 
-        
+
+
     }
 }

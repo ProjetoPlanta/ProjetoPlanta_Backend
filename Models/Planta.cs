@@ -13,13 +13,10 @@ namespace ProjetoPlanta_Backend.Models
         public string nomeCientifico { get; set; }
 
         [FirestoreProperty]
-        public string categoriaGeral { get; set; }
-
-        [FirestoreProperty]
-        public string cicloVida { get; set; }
-
-        [FirestoreProperty]
         public string descricao { get; set; }
+
+        [FirestoreProperty]
+        public string comoCuidar { get; set; }
 
         [FirestoreProperty]
         public string epocaFloracao { get; set; }
@@ -31,7 +28,7 @@ namespace ProjetoPlanta_Backend.Models
         public string necessidadeLuz { get; set; }
 
         [FirestoreProperty]
-        public string necessidadePoda { get; set; }
+        public string frequenciaPoda { get; set; }
 
         [FirestoreProperty]
         public string porte { get; set; }
@@ -49,14 +46,16 @@ namespace ProjetoPlanta_Backend.Models
         public bool atraiAbelha { get; set; }
 
         [FirestoreProperty]
-        public bool medicinal { get; set; }
-
-        [FirestoreProperty]
-        public bool toxicidade { get; set; }
+        public bool petFriendly { get; set; }
 
         [FirestoreProperty]
         public string imagem { get; set; }
+
+        [FirestoreProperty]
         public string id { get; set; }
+
+        [FirestoreProperty]
+        public int estoque { get; set; }
     }
 
 }
