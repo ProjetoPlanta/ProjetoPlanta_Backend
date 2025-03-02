@@ -88,8 +88,9 @@ namespace ProjetoPlanta_Backend.Controllers
 
                 await _service.updateDocAsync("Plantas", movimentacao.plantaId, planta);
                 await _service.AddDocAsync("Movimentacoes", movimentacao);
-
-                return Ok(new { message = "Movimentação registrada com sucesso!" });
+                string autoId = await _service.AddDocAsync("Movimentacoes", movimentacao);
+                Console.WriteLine("Documento salvo no Firestore com ID: " + autoId);
+                return Ok(new { message = "Movimentação registrada com sucesso!", id = autoId });
             }
             catch (Exception ex)
             {
