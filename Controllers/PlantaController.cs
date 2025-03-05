@@ -50,7 +50,19 @@ namespace ProjetoPlanta_Backend.Controllers
 
                 string autoId = await _service.AddDocAsync("Plantas", novaPlanta);
                 Console.WriteLine("Documento salvo no Firestore com ID: " + autoId);
-                return Ok(new { message = "Planta cadastrada com sucesso!", id = autoId });
+
+
+                var movimentacao = new Movimentacao
+                {
+                    plantaId = autoId,
+                    quantidade = novaPlanta.estoque,
+                    tipoTransacao = "reabastecimento",
+                    data = DateTime.UtcNow
+                };
+
+                string movimentacaoId = await _service.AddDocAsync("Movimentacoes", movimentacao);
+                return Ok(new { message = "Planta cadastrada com sucesso!", id = autoId,
+                                message2 = "Gerada movimentação de estoque com ID:", movimentacaoId});
             }
             catch (Exception ex)
             {
@@ -118,7 +130,7 @@ namespace ProjetoPlanta_Backend.Controllers
             {
                 Console.WriteLine($"Erro ao buscar plantas no Firestore: {ex.Message}");
                 return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
-            } 
+            }
         }
 
         [HttpGet]
@@ -145,6 +157,26 @@ namespace ProjetoPlanta_Backend.Controllers
             {
                 Console.WriteLine($"Erro ao buscar planta por ID: {ex.Message}");
                 return StatusCode(500, new { error = "Erro interno do servidor!", detalhes = ex.Message });
+            }
+        }
+
+        [HttpGet("Movimentacoes")]
+        public async Task<IActionResult> ObterMovimentacoesAsync()
+        {
+            try
+            {
+                var movimentacoes = await _service.getAllDocsAsync<Movimentacao>("Movimentacoes");
+
+                if (movimentacoes == null || movimentacoes.Count == 0)
+                {
+                    return NotFound(new { message = "Nenhuma movimentação encontrada." });
+                }
+
+                return Ok(movimentacoes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno do servidor.", detalhes = ex.Message });
             }
         }
 

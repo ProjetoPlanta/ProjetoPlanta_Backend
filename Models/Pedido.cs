@@ -1,4 +1,6 @@
 ﻿using Google.Cloud.Firestore;
+using System;
+using System.Collections.Generic;
 
 namespace ProjetoPlanta_Backend.Models
 {
@@ -6,10 +8,10 @@ namespace ProjetoPlanta_Backend.Models
     public class Pedido
     {
         [FirestoreProperty]
-        public string plantaId { get; set; }
+        public List<PlantaPedido> plantas { get; set; }
 
         [FirestoreProperty]
-        public int quantidade { get; set; }
+        public List<Planta> plantasDetalhadas { get; set; }
 
         [FirestoreProperty]
         public string status { get; set; }
@@ -22,5 +24,15 @@ namespace ProjetoPlanta_Backend.Models
 
         [FirestoreProperty]
         public string telefoneUsuario { get; set; }
+    }
+
+    [FirestoreData]
+    public class PlantaPedido
+    {
+        [FirestoreProperty]
+        public string plantaId { get; set; }
+
+        [FirestoreProperty]
+        public int quantidade { get; set; }
     }
 }
