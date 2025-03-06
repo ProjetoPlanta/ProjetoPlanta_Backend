@@ -66,7 +66,6 @@ namespace ProjetoPlanta_Backend.Controllers
             }
         }
 
-        // Obter todos os pedidos
         [HttpGet]
         public async Task<IActionResult> ObterPedidosAsync()
         {
@@ -89,7 +88,6 @@ namespace ProjetoPlanta_Backend.Controllers
                             }
                         }
 
-                        // Substitui a lista de PlantaPedido pela lista de plantas completas
                         pedido.plantasDetalhadas = detalhesDasPlantas;
                     }
                 }
@@ -104,7 +102,6 @@ namespace ProjetoPlanta_Backend.Controllers
 
 
 
-        // Obter um pedido específico por ID
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPedidoPorIdAsync(string id)
         {

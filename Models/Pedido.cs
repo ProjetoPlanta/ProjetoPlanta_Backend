@@ -24,6 +24,9 @@ namespace ProjetoPlanta_Backend.Models
 
         [FirestoreProperty]
         public string telefoneUsuario { get; set; }
+
+        [FirestoreDocumentId]
+        public string id { get; set; }
     }
 
     [FirestoreData]
