@@ -4,6 +4,7 @@ using ProjetoPlanta_Backend.Data;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjetoPlanta_Backend.ViewModels;
 
 namespace ProjetoPlanta_Backend.Controllers
 {
@@ -18,9 +19,8 @@ namespace ProjetoPlanta_Backend.Controllers
             _service = new FirestoreService();
         }
 
-        // Criar Pedido (Atualizado para múltiplas plantas)
         [HttpPost]
-        public async Task<IActionResult> CriarPedidoAsync([FromBody] Pedido pedido)
+        public async Task<IActionResult> CriarPedidoAsync([FromBody] PedidoViewModel pedido)
         {
             try
             {
@@ -44,7 +44,6 @@ namespace ProjetoPlanta_Backend.Controllers
                         return BadRequest(new { message = $"Estoque insuficiente para a planta {planta.nomePopular}." });
                     }
 
-                    // Adiciona a planta validada à lista de retorno
                     plantasNoPedido.Add(planta);
                 }
 
