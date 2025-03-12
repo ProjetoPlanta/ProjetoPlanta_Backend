@@ -20,18 +20,18 @@ namespace ProjetoPlanta_Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CriarPedidoAsync([FromBody] PedidoViewModel pedido)
+        public async Task<IActionResult> CriarPedidoAsync([FromBody] PedidoViewModel pedidoViewModel)
         {
             try
             {
-                if (pedido.plantas == null || pedido.plantas.Count == 0)
+                if (pedidoViewModel.plantas == null || pedidoViewModel.plantas.Count == 0)
                 {
                     return BadRequest(new { message = "O pedido deve conter pelo menos uma planta." });
                 }
 
-                List<Planta> plantasNoPedido = new List<Planta>();
+                List<ProjetoPlanta_Backend.Models.PlantaPedido> plantasPedido = new List<ProjetoPlanta_Backend.Models.PlantaPedido>();
 
-                foreach (var item in pedido.plantas)
+                foreach (var item in pedidoViewModel.plantas)
                 {
                     var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
                     if (planta == null)
@@ -44,11 +44,29 @@ namespace ProjetoPlanta_Backend.Controllers
                         return BadRequest(new { message = $"Estoque insuficiente para a planta {planta.nomePopular}." });
                     }
 
-                    plantasNoPedido.Add(planta);
+                    // Certificar-se de que a planta tem um ID
+                    if (string.IsNullOrEmpty(planta.id))
+                    {
+                        planta.id = item.plantaId; // Atribuir o ID do documento manualmente
+                    }
+
+                    // Criar um objeto PlantaPedido corretamente preenchido
+                    plantasPedido.Add(new ProjetoPlanta_Backend.Models.PlantaPedido
+                    {
+                        plantaId = planta.id,
+                        quantidade = item.quantidade
+                    });
                 }
 
-                pedido.status = "pendente";
-                pedido.data = DateTime.UtcNow;
+                // Criar objeto Pedido para salvar no Firestore
+                var pedido = new Pedido
+                {
+                    plantas = plantasPedido,
+                    status = "pendente",
+                    data = DateTime.UtcNow,
+                    emailUsuario = pedidoViewModel.emailUsuario,
+                    telefoneUsuario = pedidoViewModel.telefoneUsuario
+                };
 
                 string pedidoId = await _service.AddDocAsync("Pedidos", pedido);
 
@@ -56,7 +74,7 @@ namespace ProjetoPlanta_Backend.Controllers
                 {
                     message = "Pedido criado com sucesso!",
                     id = pedidoId,
-                    plantas = plantasNoPedido
+                    plantas = plantasPedido
                 });
             }
             catch (Exception ex)
@@ -64,6 +82,8 @@ namespace ProjetoPlanta_Backend.Controllers
                 return StatusCode(500, new { message = "Erro interno do servidor.", detalhes = ex.Message });
             }
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> ObterPedidosAsync()
