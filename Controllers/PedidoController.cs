@@ -121,12 +121,50 @@ namespace ProjetoPlanta_Backend.Controllers
 
 
 
-        [HttpGet("{id}")]
+        [HttpGet("id/{id}")]
         public async Task<IActionResult> ObterPedidoPorIdAsync(string id)
         {
             try
             {
                 var pedido = await _service.getDocAsync<Pedido>("Pedidos", id);
+                if (pedido == null)
+                {
+                    return NotFound(new { message = "Pedido não encontrado." });
+                }
+                return Ok(pedido);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao buscar pedido.", detalhes = ex.Message });
+            }
+        }
+
+        [HttpGet("email/{emailUsuario}")]
+        public async Task<IActionResult> ObterPedidoPorEmailAsync(string emailUsuario)
+        {
+            try
+            {
+                Console.WriteLine(emailUsuario);
+                var pedido = await _service.getDocAsync<Pedido>("Pedidos", emailUsuario);
+                Console.WriteLine(pedido);
+                if (pedido == null)
+                {
+                    return NotFound(new { message = "Pedido não encontrado." });
+                }
+                return Ok(pedido);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao buscar pedido.", detalhes = ex.Message });
+            }
+        }
+
+        [HttpGet("telefone/{telefoneUsuario}")]
+        public async Task<IActionResult> ObterPedidoPorTelefoneAsync(string telefoneUsuario)
+        {
+            try
+            {
+                var pedido = await _service.getDocAsync<Pedido>("Pedidos", telefoneUsuario);
                 if (pedido == null)
                 {
                     return NotFound(new { message = "Pedido não encontrado." });
