@@ -60,6 +60,37 @@ namespace ProjetoPlanta_Backend.Data
 
             return default;
         }
+
+        public async Task<List<T>> GetDocsByEmailAsync<T>(string collection, string email)
+        {
+            var query = _firestoreDb.Collection(collection)
+                                    .WhereEqualTo("emailUsuario", email);
+
+            var snapshot = await query.GetSnapshotAsync();
+
+            if (snapshot.Count == 0)
+            {
+                return new List<T>(); // Retorna lista vazia se não encontrar nada
+            }
+
+            return snapshot.Documents.Select(doc => doc.ConvertTo<T>()).ToList();
+        }
+
+        public async Task<List<T>> GetDocsByTelefoneAsync<T>(string collection, string telefone)
+        {
+            var query = _firestoreDb.Collection(collection)
+                                    .WhereEqualTo("telefoneUsuario", telefone);
+
+            var snapshot = await query.GetSnapshotAsync();
+
+            if (snapshot.Count == 0)
+            {
+                return new List<T>(); // Retorna lista vazia se não encontrar nada
+            }
+
+            return snapshot.Documents.Select(doc => doc.ConvertTo<T>()).ToList();
+        }
+
         public async Task<List<T>> getAllDocsAsync<T>(string collection) where T : new()
         {
             var query = _firestoreDb.Collection(collection);

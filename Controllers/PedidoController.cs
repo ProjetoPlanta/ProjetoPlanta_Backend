@@ -90,33 +90,47 @@ namespace ProjetoPlanta_Backend.Controllers
         {
             try
             {
-                var pedidos = await _service.getAllDocsAsync<Pedido>("Pedidos");
-
-                foreach (var pedido in pedidos)
+                var pedido = await _service.getAllDocsAsync<Pedido>("Pedidos");
+                if (pedido == null)
                 {
-                    if (pedido.plantas != null && pedido.plantas.Count > 0)
-                    {
-                        List<Planta> detalhesDasPlantas = new List<Planta>();
-
-                        foreach (var item in pedido.plantas)
-                        {
-                            var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
-                            if (planta != null)
-                            {
-                                detalhesDasPlantas.Add(planta);
-                            }
-                        }
-
-                        pedido.plantasDetalhadas = detalhesDasPlantas;
-                    }
+                    return NotFound(new { message = "Pedido não encontrado." });
                 }
-
-                return Ok(pedidos);
+                return Ok(pedido);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Erro ao buscar pedidos.", detalhes = ex.Message });
+                return StatusCode(500, new { message = "Erro ao buscar pedido.", detalhes = ex.Message });
             }
+
+            //try
+            //{
+            //    var pedidos = await _service.getAllDocsAsync<Pedido>("Pedidos");
+
+            //    foreach (var pedido in pedidos)
+            //    {
+            //        if (pedido.plantas != null && pedido.plantas.Count > 0)
+            //        {
+            //            List<Planta> detalhesDasPlantas = new List<Planta>();
+
+            //            foreach (var item in pedido.plantas)
+            //            {
+            //                var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
+            //                if (planta != null)
+            //                {
+            //                    detalhesDasPlantas.Add(planta);
+            //                }
+            //            }
+
+            //            pedido.plantasDetalhadas = detalhesDasPlantas;
+            //        }
+            //    }
+
+            //    return Ok(pedidos);
+            //}
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, new { message = "Erro ao buscar pedidos.", detalhes = ex.Message });
+            //}
         }
 
 
@@ -140,12 +154,12 @@ namespace ProjetoPlanta_Backend.Controllers
         }
 
         [HttpGet("email/{emailUsuario}")]
-        public async Task<IActionResult> ObterPedidoPorEmailAsync(string emailUsuario)
+        public async Task<IActionResult> ObterPedidoPorEmailAsync([FromRoute] string emailUsuario)
         {
             try
             {
                 Console.WriteLine(emailUsuario);
-                var pedido = await _service.getDocAsync<Pedido>("Pedidos", emailUsuario);
+                var pedido = await _service.GetDocsByEmailAsync<Pedido>("Pedidos", emailUsuario);
                 Console.WriteLine(pedido);
                 if (pedido == null)
                 {
@@ -160,11 +174,11 @@ namespace ProjetoPlanta_Backend.Controllers
         }
 
         [HttpGet("telefone/{telefoneUsuario}")]
-        public async Task<IActionResult> ObterPedidoPorTelefoneAsync(string telefoneUsuario)
+        public async Task<IActionResult> ObterPedidoPorTelefone(string telefoneUsuario)
         {
             try
             {
-                var pedido = await _service.getDocAsync<Pedido>("Pedidos", telefoneUsuario);
+                var pedido = await _service.GetDocsByTelefoneAsync<Pedido>("Pedidos", telefoneUsuario);
                 if (pedido == null)
                 {
                     return NotFound(new { message = "Pedido não encontrado." });
