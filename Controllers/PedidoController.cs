@@ -90,48 +90,44 @@ namespace ProjetoPlanta_Backend.Controllers
         {
             try
             {
-                var pedido = await _service.getAllDocsAsync<Pedido>("Pedidos");
-                if (pedido == null)
+                var pedidos = await _service.getAllDocsAsync<Pedido>("Pedidos");
+
+                foreach (var pedido in pedidos)
                 {
-                    return NotFound(new { message = "Pedido não encontrado." });
+                    if (pedido.plantas != null && pedido.plantas.Count > 0)
+                    {
+                        List<Planta> detalhesDasPlantas = new List<Planta>();
+
+                        foreach (var item in pedido.plantas)
+                        {
+                            var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
+                            if (planta != null)
+                            {
+                                detalhesDasPlantas.Add(planta);
+                            }
+                        }
+
+                        // Inicializa a lista antes de adicionar elementos
+                        if (pedido.plantasDetalhadas == null)
+                        {
+                            pedido.plantasDetalhadas = new List<Planta>();
+                        }
+
+                        foreach (var itemPlanta in detalhesDasPlantas)
+                        {
+                            pedido.plantasDetalhadas.Add(itemPlanta);
+                        }
+                    }
                 }
-                return Ok(pedido);
+
+                return Ok(pedidos);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Erro ao buscar pedido.", detalhes = ex.Message });
+                return StatusCode(500, new { message = "Erro ao buscar pedidos.", detalhes = ex.Message });
             }
-
-            //try
-            //{
-            //    var pedidos = await _service.getAllDocsAsync<Pedido>("Pedidos");
-
-            //    foreach (var pedido in pedidos)
-            //    {
-            //        if (pedido.plantas != null && pedido.plantas.Count > 0)
-            //        {
-            //            List<Planta> detalhesDasPlantas = new List<Planta>();
-
-            //            foreach (var item in pedido.plantas)
-            //            {
-            //                var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
-            //                if (planta != null)
-            //                {
-            //                    detalhesDasPlantas.Add(planta);
-            //                }
-            //            }
-
-            //            pedido.plantasDetalhadas = detalhesDasPlantas;
-            //        }
-            //    }
-
-            //    return Ok(pedidos);
-            //}
-            //catch (Exception ex)
-            //{
-            //    return StatusCode(500, new { message = "Erro ao buscar pedidos.", detalhes = ex.Message });
-            //}
         }
+
 
 
 
