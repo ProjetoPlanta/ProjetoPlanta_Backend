@@ -50,6 +50,9 @@ namespace ProjetoPlanta_Backend.Controllers
                         planta.id = item.plantaId; // Atribuir o ID do documento manualmente
                     }
 
+                    planta.estoque -= item.quantidade;
+                    await _service.updateDocAsync("Plantas", item.plantaId, planta);
+
                     // Criar um objeto PlantaPedido corretamente preenchido
                     plantasPedido.Add(new ProjetoPlanta_Backend.Models.PlantaPedido
                     {
@@ -262,9 +265,6 @@ namespace ProjetoPlanta_Backend.Controllers
                         var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
                         if (planta != null && planta.estoque >= item.quantidade)
                         {
-                            planta.estoque -= item.quantidade;
-                            await _service.updateDocAsync("Plantas", item.plantaId, planta);
-
                             // Registrar movimentação de estoque
                             var movimentacao = new Movimentacao
                             {
@@ -274,6 +274,28 @@ namespace ProjetoPlanta_Backend.Controllers
                                 data = DateTime.UtcNow
                             };
                             await _service.AddDocAsync("Movimentacoes", movimentacao);
+                        }
+                    }
+                }
+                else if (novoStatus.ToLower() == "recusado")
+                {
+                    foreach (var item in pedido.plantas)
+                    {
+                        var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
+                        if (planta != null)
+                        {
+                            planta.estoque += item.quantidade;
+                            await _service.updateDocAsync("Plantas", item.plantaId, planta);
+                            // Registrar movimentação de estoque
+                            var movimentacao = new Movimentacao
+                            {
+                                plantaId = item.plantaId,
+                                quantidade = item.quantidade,
+                                tipoTransacao = "venda online",
+                                data = DateTime.UtcNow
+                            };
+                            await _service.AddDocAsync("Movimentacoes", movimentacao);
+
                         }
                     }
                 }
