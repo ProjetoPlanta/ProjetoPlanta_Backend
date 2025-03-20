@@ -154,14 +154,40 @@ namespace ProjetoPlanta_Backend.Controllers
         {
             try
             {
-                Console.WriteLine(emailUsuario);
-                var pedido = await _service.GetDocsByEmailAsync<Pedido>("Pedidos", emailUsuario);
-                Console.WriteLine(pedido);
-                if (pedido == null)
+                var pedidos = await _service.GetDocsByEmailAsync<Pedido>("Pedidos", emailUsuario);
+                
+                if (pedidos == null)
                 {
                     return NotFound(new { message = "Pedido não encontrado." });
                 }
-                return Ok(pedido);
+                foreach (var pedido in pedidos)
+                {
+                    if (pedido.plantas != null && pedido.plantas.Count > 0)
+                    {
+                        List<Planta> detalhesDasPlantas = new List<Planta>();
+
+                        foreach (var item in pedido.plantas)
+                        {
+                            var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
+                            if (planta != null)
+                            {
+                                detalhesDasPlantas.Add(planta);
+                            }
+                        }
+
+                        // Inicializa a lista antes de adicionar elementos
+                        if (pedido.plantasDetalhadas == null)
+                        {
+                            pedido.plantasDetalhadas = new List<Planta>();
+                        }
+
+                        foreach (var itemPlanta in detalhesDasPlantas)
+                        {
+                            pedido.plantasDetalhadas.Add(itemPlanta);
+                        }
+                    }
+                }
+                return Ok(pedidos);
             }
             catch (Exception ex)
             {
@@ -174,12 +200,39 @@ namespace ProjetoPlanta_Backend.Controllers
         {
             try
             {
-                var pedido = await _service.GetDocsByTelefoneAsync<Pedido>("Pedidos", telefoneUsuario);
-                if (pedido == null)
+                var pedidos = await _service.GetDocsByTelefoneAsync<Pedido>("Pedidos", telefoneUsuario);
+                if (pedidos == null)
                 {
                     return NotFound(new { message = "Pedido não encontrado." });
                 }
-                return Ok(pedido);
+                foreach (var pedido in pedidos)
+                {
+                    if (pedido.plantas != null && pedido.plantas.Count > 0)
+                    {
+                        List<Planta> detalhesDasPlantas = new List<Planta>();
+
+                        foreach (var item in pedido.plantas)
+                        {
+                            var planta = await _service.getDocAsync<Planta>("Plantas", item.plantaId);
+                            if (planta != null)
+                            {
+                                detalhesDasPlantas.Add(planta);
+                            }
+                        }
+
+                        // Inicializa a lista antes de adicionar elementos
+                        if (pedido.plantasDetalhadas == null)
+                        {
+                            pedido.plantasDetalhadas = new List<Planta>();
+                        }
+
+                        foreach (var itemPlanta in detalhesDasPlantas)
+                        {
+                            pedido.plantasDetalhadas.Add(itemPlanta);
+                        }
+                    }
+                }
+                return Ok(pedidos);
             }
             catch (Exception ex)
             {
