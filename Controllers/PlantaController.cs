@@ -175,7 +175,7 @@ namespace ProjetoPlanta_Backend.Controllers
                 return Ok(movimentacoes);
             }
             catch (Exception ex)
-            {
+            {   
                 return StatusCode(500, new { message = "Erro interno do servidor.", detalhes = ex.Message });
             }
         }
