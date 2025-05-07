@@ -109,6 +109,12 @@ namespace ProjetoPlanta_Backend.Data
                         planta.id = doc.Id;
                     }
 
+                    if (obj is Campanha campanha)
+                    {
+                        campanha.id = doc.Id;
+                    }
+
+
                     lista.Add(obj);
                 }
             }

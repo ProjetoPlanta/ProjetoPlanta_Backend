@@ -6,7 +6,7 @@ namespace ProjetoPlanta_Backend.Models
     public class Campanha
     {
         [FirestoreProperty]
-        public string Id { get; set; }
+        public string id { get; set; }
 
         [FirestoreProperty]
         public string Nome { get; set; }
