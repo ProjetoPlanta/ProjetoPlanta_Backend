@@ -45,7 +45,9 @@ namespace ProjetoPlanta_Backend.Controllers
                     atraiAbelha = model.atraiAbelha,
                     petFriendly = model.petFriendly,
                     imagem = model.imagem,
-                    estoque = model.estoque
+                    estoque = model.estoque,
+                    tags = model.tags
+
                 };
 
                 string autoId = await _service.AddDocAsync("Plantas", novaPlanta);
@@ -207,6 +209,8 @@ namespace ProjetoPlanta_Backend.Controllers
                 plantaExistente.atraiAbelha = model.atraiAbelha;
                 plantaExistente.petFriendly = model.petFriendly; // Corrigido para usar petFriendly
                 plantaExistente.imagem = model.imagem;
+                plantaExistente.tags = model.tags;
+
 
                 await _service.updateDocAsync("Plantas", id, plantaExistente);
 

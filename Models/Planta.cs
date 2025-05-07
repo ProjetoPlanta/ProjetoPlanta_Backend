@@ -56,6 +56,9 @@ namespace ProjetoPlanta_Backend.Models
 
         [FirestoreProperty]
         public int estoque { get; set; }
+
+        [FirestoreProperty]
+        public List<string> tags { get; set; } = new List<string>();
     }
 
 }
